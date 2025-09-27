@@ -17,6 +17,7 @@ Area: https://www.cyclosm.org/#map=13/52.2979/-8.5451/cyclosm
 - `fetch_ballyhoura_elevation.py` – gathers elevation samples from the Open-Elevation API (requires `requests`). Example: `python fetch_ballyhoura_elevation.py --loops "Greenwood Loop" --output ballyhoura-elevation.csv`.
 - `render_trail_profile.py` – plots an elevation profile for a single trail segment using a pre-fetched elevation CSV. Example: `python render_trail_profile.py --trail "Blue Grade - Green Machine" --elevations greenwood-elevation.csv`.
 - `render_loop_profiles.py` – batch-generates elevation profiles for every segment in a loop. Example: `python render_loop_profiles.py --loop "Greenwood Loop" --elevations greenwood-elevation.csv --output-dir profiles/greenwood`.
+- `generate_trails_markdown.py` – rebuilds `trails.md` with ride order, lengths, and key tags. Run `python generate_trails_markdown.py` after updating the Overpass export.
 
 ### Loop stats workflow
 
