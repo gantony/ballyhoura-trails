@@ -13,6 +13,36 @@ Area: https://www.cyclosm.org/#map=13/52.2979/-8.5451/cyclosm
 - `render_loop_map.py` – convenience wrapper that outputs a PNG map for a single loop. Example: `python render_loop_map.py "Greenwood"`.
 - `render_ballyhoura_folium.py` – builds an interactive Leaflet map (HTML) using Folium with per-loop toggles; add `--elevation-overlay` to enable contour + hillshade layers. Example: `python render_ballyhoura_folium.py --loop Garrane --elevation-overlay --output garrane.html`.
 - `list_ballyhoura_trails.py` – prints the trail segments that make up each MTB loop with basic tagging. Run `python list_ballyhoura_trails.py`.
+- `compute_loop_stats.py` – outputs the ordered list of segments for a loop with distance and (optional) ascent/descent. Provide an elevation CSV via `--elevations`. Example: `python compute_loop_stats.py --loop "Greenwood Loop" --elevations ballyhoura-elevation.csv`.
+- `fetch_ballyhoura_elevation.py` – gathers elevation samples from the Open-Elevation API (requires `requests`). Example: `python fetch_ballyhoura_elevation.py --loops "Greenwood Loop" --output ballyhoura-elevation.csv`.
+
+### Loop stats workflow
+
+Run the elevation fetcher (step 1) and stats script (step 2) for each loop:
+
+```bash
+# Greenwood
+python fetch_ballyhoura_elevation.py --loops "Greenwood Loop" --output greenwood-elevation.csv --sleep 2 --max-retries 8 --batch-size 250
+python compute_loop_stats.py --loop "Greenwood Loop" --elevations greenwood-elevation.csv
+
+# Mountrussell
+python fetch_ballyhoura_elevation.py --loops "Mountrussell Loop" --output mountrussell-elevation.csv --sleep 2 --max-retries 8 --batch-size 250
+python compute_loop_stats.py --loop "Mountrussell Loop" --elevations mountrussell-elevation.csv
+
+# Garrane
+python fetch_ballyhoura_elevation.py --loops "Garrane Loop" --output garrane-elevation.csv --sleep 2 --max-retries 8 --batch-size 250
+python compute_loop_stats.py --loop "Garrane Loop" --elevations garrane-elevation.csv
+
+# Streamhill
+python fetch_ballyhoura_elevation.py --loops "Streamhill Loop" --output streamhill-elevation.csv --sleep 2 --max-retries 8 --batch-size 250
+python compute_loop_stats.py --loop "Streamhill Loop" --elevations streamhill-elevation.csv
+
+# Castlepook
+python fetch_ballyhoura_elevation.py --loops "Castlepook Loop" --output castlepook-elevation.csv --sleep 2 --max-retries 8 --batch-size 250
+python compute_loop_stats.py --loop "Castlepook Loop" --elevations castlepook-elevation.csv
+```
+
+If the elevation API rate limits you, rerun the fetch command with a smaller `--batch-size`, a longer `--sleep` (e.g. `--sleep 2`), and/or higher `--max-retries`.
 
 All scripts assume the Overpass export file is named `ballyhoura-overpass.json` unless an explicit path is provided.
 
