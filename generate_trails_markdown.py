@@ -17,6 +17,17 @@ ORDER = [
 INFO_TAGS = ["highway", "mtb:scale"]
 INPUT = Path("ballyhoura-overpass.json")
 OUTPUT = Path("trails.md")
+EXTRA_SOURCES = [
+    Path("new_overpass.json"),
+    Path("freebird_overpass.json"),
+]
+EXTRA_CATEGORIES = {
+    "Other Red": [
+        "Red Grade - Tech 1",
+        "Red Grade - Tech 2",
+        "Red Grade - Free bird",
+    ],
+}
 
 Point = Tuple[float, float]
 
@@ -63,6 +74,18 @@ def main() -> None:
     ways = {el["id"]: el for el in data.get("elements", []) if el.get("type") == "way"}
     relations = [el for el in data.get("elements", []) if el.get("type") == "relation"]
 
+    for extra_path in EXTRA_SOURCES:
+        if not extra_path.exists():
+            continue
+        with extra_path.open("r", encoding="utf-8") as fh:
+            extra = json.load(fh)
+        for element in extra.get("elements", []):
+            etype = element.get("type")
+            if etype == "node" and element["id"] not in nodes:
+                nodes[element["id"]] = element
+            elif etype == "way":
+                ways[element["id"]] = element
+
     relation_lookup = {
         rel.get("tags", {}).get("name"): rel
         for rel in relations
@@ -99,6 +122,32 @@ def main() -> None:
             formatted = f"{index}. {label} ({', '.join(annotations)})"
             lines.append(formatted)
             index += 1
+        lines.append("")
+
+    for category, trail_names in EXTRA_CATEGORIES.items():
+        available = []
+        for name in trail_names:
+            way = next((w for w in ways.values() if way_label(w) == name), None)
+            if not way:
+                continue
+            if name in emitted:
+                continue
+            emitted.add(name)
+            coords = way_coordinates(way, nodes)
+            length_m = compute_length(coords)
+            tags = way.get("tags", {})
+            annotations = [f"{length_m:.0f} m"]
+            for tag in INFO_TAGS:
+                if tag in tags:
+                    annotations.append(f"{tag}={tags[tag]}")
+            available.append((name, annotations))
+
+        if not available:
+            continue
+
+        lines.append(f"## {category}")
+        for index, (name, annotations) in enumerate(available, start=1):
+            lines.append(f"{index}. {name} ({', '.join(annotations)})")
         lines.append("")
 
     OUTPUT.write_text("\n".join(lines), encoding="utf-8")

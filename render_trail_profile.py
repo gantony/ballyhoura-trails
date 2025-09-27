@@ -39,6 +39,11 @@ def parse_args() -> argparse.Namespace:
         help="Name (or substring) of the way to profile",
     )
     parser.add_argument(
+        "--trail-id",
+        type=int,
+        help="Optional explicit way ID to select when multiple matches exist",
+    )
+    parser.add_argument(
         "--input",
         type=Path,
         default=Path("ballyhoura-overpass.json"),
@@ -88,7 +93,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_way(trail_name: str, input_path: Path) -> Tuple[dict, List[Point]]:
+def load_way(trail_name: str, input_path: Path, trail_id: Optional[int]) -> Tuple[dict, List[Point]]:
     if not input_path.exists():
         raise SystemExit(f"Input file not found: {input_path}")
     with input_path.open("r", encoding="utf-8") as fh:
@@ -107,6 +112,11 @@ def load_way(trail_name: str, input_path: Path) -> Tuple[dict, List[Point]]:
                 candidates.append(element)
     if not candidates:
         raise SystemExit(f"No way found containing name '{trail_name}'")
+    if trail_id is not None:
+        selected = next((cand for cand in candidates if cand.get("id") == trail_id), None)
+        if not selected:
+            raise SystemExit(f"Trail id {trail_id} not found for name '{trail_name}'")
+        candidates = [selected]
     if len(candidates) > 1:
         names = ", ".join(f"{way_display_name(cand)} (id {cand['id']})" for cand in candidates)
         raise SystemExit(
@@ -302,7 +312,7 @@ def slugify(name: str) -> str:
 def main() -> None:
     args = parse_args()
     elevation_index = load_elevations(args.elevations, args.tolerance)
-    way, coords = load_way(args.trail, args.input)
+    way, coords = load_way(args.trail, args.input, args.trail_id)
     dense_coords = densify(coords, args.max_segment)
     elevations = fetch_elevations(
         dense_coords,

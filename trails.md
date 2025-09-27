@@ -67,3 +67,8 @@
 
 ## Streamhill Loop
 1. way 339850008 (1601 m, highway=track)
+
+## Other Red
+1. Red Grade - Tech 1 (2126 m, highway=cycleway)
+2. Red Grade - Tech 2 (1597 m, highway=cycleway)
+3. Red Grade - Free bird (1317 m, highway=cycleway)

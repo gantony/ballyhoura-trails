@@ -22,6 +22,15 @@ ORDER = [
     "Castlepook Loop",
     "Streamhill Loop",
 ]
+EXTRA_SOURCES = [
+    Path("new_overpass.json"),
+    Path("freebird_overpass.json"),
+]
+EXTRA_TRAILS = [
+    ("Other Red", "Red Grade - Tech 1"),
+    ("Other Red", "Red Grade - Tech 2"),
+    ("Other Red", "Red Grade - Free bird"),
+]
 
 
 def parse_args() -> argparse.Namespace:
@@ -106,11 +115,23 @@ def load_overpass(path: Path) -> Tuple[Dict[int, dict], Dict[int, dict], List[di
     nodes = {el["id"]: el for el in data.get("elements", []) if el.get("type") == "node"}
     ways = {el["id"]: el for el in data.get("elements", []) if el.get("type") == "way"}
     relations = [el for el in data.get("elements", []) if el.get("type") == "relation"]
+
+    for extra_path in EXTRA_SOURCES:
+        if not extra_path.exists():
+            continue
+        with extra_path.open("r", encoding="utf-8") as fh:
+            extra = json.load(fh)
+        for element in extra.get("elements", []):
+            etype = element.get("type")
+            if etype == "node" and element["id"] not in nodes:
+                nodes[element["id"]] = element
+            elif etype == "way":
+                ways[element["id"]] = element
     return nodes, ways, relations
 
 
-def way_coords(way: dict, member: dict, nodes: Dict[int, dict]) -> List[Point]:
-    if member.get("geometry"):
+def way_coords(way: dict, member: dict | None, nodes: Dict[int, dict]) -> List[Point]:
+    if member and member.get("geometry"):
         return [(pt["lat"], pt["lon"]) for pt in member["geometry"]]
     if "geometry" in way:
         return [(pt["lat"], pt["lon"]) for pt in way["geometry"]]
@@ -182,6 +203,28 @@ def collect_profiles(
                 }
             )
             sequence += 1
+
+    for category, trail_name in EXTRA_TRAILS:
+        way = next((w for w in ways.values() if way_display_name(w) == trail_name), None)
+        if not way or way_display_name(way) in seen:
+            continue
+        coords = way_coords(way, None, nodes)
+        if len(coords) < 2:
+            continue
+        dense = densify(coords, max_segment)
+        elevations = fetch_elevations(dense, batch_size, sleep, max_retries, elevation_index)
+        distances = cumulative_distances(dense)
+        seen.add(way_display_name(way))
+        profiles.append(
+            {
+                "loop": category,
+                "label": way_display_name(way),
+                "dist_km": [d / 1000.0 for d in distances],
+                "elev_m": elevations,
+                "sequence": sequence,
+            }
+        )
+        sequence += 1
     return profiles
 
 
