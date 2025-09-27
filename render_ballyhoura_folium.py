@@ -64,6 +64,11 @@ def parse_args() -> argparse.Namespace:
         default=13,
         help="Initial zoom level (default: %(default)s)",
     )
+    parser.add_argument(
+        "--elevation-overlay",
+        action="store_true",
+        help="Add contour and hillshade overlays sourced from OpenTopoMap/WMF tiles.",
+    )
     return parser.parse_args()
 
 
@@ -229,6 +234,7 @@ def create_map(
     tiles: str,
     zoom: int,
     default_loop: str | None,
+    add_elevation_overlay: bool,
 ) -> Map:
     all_coords = [coord for segments in loop_segments.values() for seg in segments for coord in seg[0]]
     if not all_coords and extras:
@@ -244,6 +250,24 @@ def create_map(
     MiniMap(toggle_display=True).add_to(fmap)
     MeasureControl(position="topright", primary_length_unit="meters").add_to(fmap)
     MousePosition(prefix="Lat/Lon:", separator=" | ", position="bottomright").add_to(fmap)
+
+    if add_elevation_overlay:
+        folium.TileLayer(
+            tiles="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+            attr="Map data © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)",
+            name="Elevation contours (OpenTopoMap)",
+            overlay=True,
+            control=True,
+            opacity=0.7,
+        ).add_to(fmap)
+        folium.TileLayer(
+            tiles="https://tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png",
+            attr="Hillshade layer © Wikimedia",
+            name="Hillshade",
+            overlay=True,
+            control=True,
+            opacity=0.5,
+        ).add_to(fmap)
 
     groups: Dict[str, List[folium.FeatureGroup]] = {"Loops": []}
     default_key = default_loop.lower() if default_loop else None
@@ -269,6 +293,7 @@ def create_map(
         groups.setdefault("Extras", []).append(extras_group)
 
     GroupedLayerControl(groups=groups, exclusive_groups=["Loops"], collapsed=False).add_to(fmap)
+    folium.LayerControl(collapsed=False).add_to(fmap)
 
     return fmap
 
@@ -292,25 +317,10 @@ def main() -> None:
         tiles=args.tiles,
         zoom=args.zoom,
         default_loop=default_loop,
+        add_elevation_overlay=args.elevation_overlay,
     )
 
-    if default_loop:
-        title = default_loop
-    elif matched_names:
-        title = ", ".join(matched_names)
-    elif args.loops:
-        title = ", ".join(args.loops)
-    else:
-        title = "Ballyhoura MTB Trails"
-
-    folium.map.Marker(
-        location=fmap.location,
-        icon=DivIcon(
-            icon_size=(250, 36),
-            icon_anchor=(0, 0),
-            html=f'<div style="font-size:16px;font-weight:bold;background:rgba(255,255,255,0.8);padding:4px 6px;border-radius:4px;">{title}</div>',
-        ),
-    ).add_to(fmap)
+    # Title marker removed to keep map clean of floating text labels.
 
     fmap.save(args.output)
     print(f"Saved map to {args.output}")

@@ -11,7 +11,7 @@ Area: https://www.cyclosm.org/#map=13/52.2979/-8.5451/cyclosm
 - `fetch_ballyhoura_overpass.sh` – downloads the latest Ballyhoura MTB data via Overpass. Run `./fetch_ballyhoura_overpass.sh` (optional output filename as first argument).
 - `render_ballyhoura_map.py` – renders the full trail network, or filtered loops via `--loop`. Requires `matplotlib`; e.g. `python render_ballyhoura_map.py --loop Garrane --loop Greenwood`.
 - `render_loop_map.py` – convenience wrapper that outputs a PNG map for a single loop. Example: `python render_loop_map.py "Greenwood"`.
-- `render_ballyhoura_folium.py` – builds an interactive Leaflet map (HTML) using Folium with per-loop toggles. Example: `python render_ballyhoura_folium.py --loop Garrane --output garrane.html`.
+- `render_ballyhoura_folium.py` – builds an interactive Leaflet map (HTML) using Folium with per-loop toggles; add `--elevation-overlay` to enable contour + hillshade layers. Example: `python render_ballyhoura_folium.py --loop Garrane --elevation-overlay --output garrane.html`.
 - `list_ballyhoura_trails.py` – prints the trail segments that make up each MTB loop with basic tagging. Run `python list_ballyhoura_trails.py`.
 
 All scripts assume the Overpass export file is named `ballyhoura-overpass.json` unless an explicit path is provided.
