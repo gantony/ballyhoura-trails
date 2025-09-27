@@ -18,6 +18,7 @@ Area: https://www.cyclosm.org/#map=13/52.2979/-8.5451/cyclosm
 - `render_trail_profile.py` – plots an elevation profile for a single trail segment using a pre-fetched elevation CSV. Example: `python render_trail_profile.py --trail "Blue Grade - Green Machine" --elevations greenwood-elevation.csv`.
 - `render_loop_profiles.py` – batch-generates elevation profiles for every segment in a loop. Example: `python render_loop_profiles.py --loop "Greenwood Loop" --elevations greenwood-elevation.csv --output-dir profiles/greenwood`.
 - `generate_trails_markdown.py` – rebuilds `trails.md` with ride order, lengths, and key tags. Run `python generate_trails_markdown.py` after updating the Overpass export.
+- `render_trail_profiles_html.py` – creates an interactive HTML viewer for any trail profile stored in the elevation CSVs. Example: `python render_trail_profiles_html.py --elevations greenwood-elevation.csv --elevations mountrussell-elevation.csv --output trail-profiles.html`.
 
 ### Loop stats workflow
 
@@ -36,13 +37,13 @@ python compute_loop_stats.py --loop "Mountrussell Loop" --elevations mountrussel
 python fetch_ballyhoura_elevation.py --loops "Garrane Loop" --output garrane-elevation.csv --sleep 2 --max-retries 8 --batch-size 250
 python compute_loop_stats.py --loop "Garrane Loop" --elevations garrane-elevation.csv
 
-# Streamhill
-python fetch_ballyhoura_elevation.py --loops "Streamhill Loop" --output streamhill-elevation.csv --sleep 2 --max-retries 8 --batch-size 250
-python compute_loop_stats.py --loop "Streamhill Loop" --elevations streamhill-elevation.csv
-
 # Castlepook
 python fetch_ballyhoura_elevation.py --loops "Castlepook Loop" --output castlepook-elevation.csv --sleep 2 --max-retries 8 --batch-size 250
 python compute_loop_stats.py --loop "Castlepook Loop" --elevations castlepook-elevation.csv
+
+# Streamhill
+python fetch_ballyhoura_elevation.py --loops "Streamhill Loop" --output streamhill-elevation.csv --sleep 2 --max-retries 8 --batch-size 250
+python compute_loop_stats.py --loop "Streamhill Loop" --elevations streamhill-elevation.csv
 ```
 
 If the elevation API rate limits you, rerun the fetch command with a smaller `--batch-size`, a longer `--sleep` (e.g. `--sleep 2`), and/or higher `--max-retries`.

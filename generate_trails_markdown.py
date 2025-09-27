@@ -11,8 +11,8 @@ ORDER = [
     "Greenwood Loop",
     "Mountrussell Loop",
     "Garrane Loop",
-    "Streamhill Loop",
     "Castlepook Loop",
+    "Streamhill Loop",
 ]
 INFO_TAGS = ["highway", "mtb:scale"]
 INPUT = Path("ballyhoura-overpass.json")

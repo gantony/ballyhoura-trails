@@ -27,6 +27,13 @@ DEFAULT_PATH_COLOUR = "#7570b3"
 LOOP_FALLBACK_COLOURS = {
     "garrane loop": "#d95f02",  # orange accent to avoid white-on-white
 }
+LOOP_DISPLAY_ORDER = [
+    "Greenwood Loop",
+    "Mountrussell Loop",
+    "Garrane Loop",
+    "Castlepook Loop",
+    "Streamhill Loop",
+]
 
 
 def parse_args() -> argparse.Namespace:
@@ -205,9 +212,18 @@ def render_map(
     # Create a compact legend.
     from matplotlib.lines import Line2D  # local import keeps matplotlib dependency minimal
 
+    def legend_sort_key(item: Tuple[str, str]) -> Tuple[int, str]:
+        label, _ = item
+        return (
+            LOOP_DISPLAY_ORDER.index(label)
+            if label in LOOP_DISPLAY_ORDER
+            else len(LOOP_DISPLAY_ORDER),
+            label,
+        )
+
     legend_handles = [
         Line2D([0], [0], color=colour, lw=2.0, label=label)
-        for label, colour in sorted(legend_items.items())
+        for label, colour in sorted(legend_items.items(), key=legend_sort_key)
     ]
     if legend_handles:
         ax.legend(handles=legend_handles, title="Trail difficulty", loc="lower left")

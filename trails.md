@@ -40,7 +40,7 @@
 15. Garane 12 (275 m, highway=track)
 16. Garane 13 (450 m, highway=track)
 
-## Streamhill Loop
+## Castlepook Loop
 1. way 444200696 (991 m, highway=cycleway)
 2. way 340369898 (763 m, highway=track)
 3. way 156984663 (635 m, highway=cycleway)
@@ -53,17 +53,17 @@
 10. way 686682718 (15 m, highway=track)
 11. way 686682717 (15 m, highway=track)
 12. way 443167113 (425 m, highway=track)
-13. way 339850008 (1601 m, highway=track)
-14. way 443167118 (1423 m, highway=track)
-15. Red Grade - Full Circle (594 m, highway=cycleway)
+13. Castlepook 1 (1074 m, highway=track)
+14. Red Grade - Flying Sauser (1321 m, highway=cycleway)
+15. Red Grade - Superman (884 m, highway=cycleway)
+16. Castlepook 3 (478 m, highway=track)
+17. Castlepook 4 (1195 m, highway=cycleway)
+18. Castlepook 5 (1062 m, highway=track)
+19. Castlepook 6 (1689 m, highway=track)
+20. Castlepook 7 (572 m, highway=track)
+21. Castlepook 8 (2368 m, highway=track)
+22. way 443167118 (1423 m, highway=track)
+23. Red Grade - Full Circle (594 m, highway=cycleway)
 
-## Castlepook Loop
-1. Castlepook 1 (1074 m, highway=track)
-2. Red Grade - Flying Sauser (1321 m, highway=cycleway)
-3. Red Grade - Superman (884 m, highway=cycleway)
-4. Castlepook 3 (478 m, highway=track)
-5. Castlepook 4 (1195 m, highway=cycleway)
-6. Castlepook 5 (1062 m, highway=track)
-7. Castlepook 6 (1689 m, highway=track)
-8. Castlepook 7 (572 m, highway=track)
-9. Castlepook 8 (2368 m, highway=track)
+## Streamhill Loop
+1. way 339850008 (1601 m, highway=track)
