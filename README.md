@@ -15,6 +15,8 @@ Area: https://www.cyclosm.org/#map=13/52.2979/-8.5451/cyclosm
 - `list_ballyhoura_trails.py` – prints the trail segments that make up each MTB loop with basic tagging. Run `python list_ballyhoura_trails.py`.
 - `compute_loop_stats.py` – outputs the ordered list of segments for a loop with distance and (optional) ascent/descent. Provide an elevation CSV via `--elevations`. Example: `python compute_loop_stats.py --loop "Greenwood Loop" --elevations ballyhoura-elevation.csv`.
 - `fetch_ballyhoura_elevation.py` – gathers elevation samples from the Open-Elevation API (requires `requests`). Example: `python fetch_ballyhoura_elevation.py --loops "Greenwood Loop" --output ballyhoura-elevation.csv`.
+- `render_trail_profile.py` – plots an elevation profile for a single trail segment using a pre-fetched elevation CSV. Example: `python render_trail_profile.py --trail "Blue Grade - Green Machine" --elevations greenwood-elevation.csv`.
+- `render_loop_profiles.py` – batch-generates elevation profiles for every segment in a loop. Example: `python render_loop_profiles.py --loop "Greenwood Loop" --elevations greenwood-elevation.csv --output-dir profiles/greenwood`.
 
 ### Loop stats workflow
 
